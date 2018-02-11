@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi"> -->
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimun-scale=1,user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="true"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    <title>当男神闺密七舅姥爷一块@你</title>
+    <link rel="stylesheet" href="chatcss/style.css">
+    <link rel="stylesheet" href="chatcss/layer.css">
+</head>
+<body>
+<!--<input type="file" id="inputtest" style="height: 100px;width: 100px;background: #000;position:absolute;z">-->
+    <img src="" id="demb" style="display: none;"/>
+    <img class="mask" id="mask" src="chatimage/mask.png" alt=""  style="display: none">
+    <section class="tipplayer" style="display: none">
+        <p>请在竖屏模式查看</p>
+    </section>
+    <div class="media">
+        <video src="chatimage/chunjie.mp4" preload="auto" controls="" poster="chatimage/poster.png"></video>
+    </div>
+    
+    <div class="page3">
+        <div class="haibaodiv">
+            <div class="hbdiv">
+                <img src="chatimage/mod-1.png" id="haibao0" class="active" alt="">
+                <img src="chatimage/haibao2.png" id="haibao1" class="" alt="">
+                <img src="chatimage/haibao3.png" id="haibao2" class="" alt="">
+            </div>
+            <img id="sczp" style="display: none" src="" alt="">
+            <canvas id="gameview_zp" width="750" height="1206" style="background-color: rgba(0,255,0,0.01)"></canvas>
+            <div class="shangchuantishi suofang" style="display: none"></div>
+            <div class="queding"></div>
+
+            <div class="btn_shangchuan suofang">
+                <input type="file" name id="zhaopian">
+            </div>
+
+            <div class="btn_chongxinshangchuan"></div>
+            <div class="btn_datan"></div>
+            <div class="btn_queding suofang" style="display: none"></div>
+
+            <div class="changanbaocun suofang"></div>
+            <div class="zhaopiandiv">
+                <input type="file" name id="zhaopian1">
+            </div>
+
+            <div class="left"></div>
+            <div class="right"></div>
+        </div>
+    </div>
+    <img class="baocunImg suofang" src="chatimage/baocun.png" alt="" style="display: none">
+    <div class="loadingBox">
+        <img src="chatimage/loading.png" alt="">
+    </div>
+    <script src="chatjs/exif.js"></script>
+    <script src="chatjs/jquery-2.1.4.min.js"></script>
+    <script src="chatjs/jquery.cookie.js"></script>
+
+    <script src="chatjs/layer.m.js"></script>
+    <script src="chatjs/createjs.js"></script>
+    <script src="chatjs/second1.js"></script>
+    <script src="chatjs/touch-0.2.14.min.js"></script>
+
+    <script>
+        var linkPrefix = 'chatimage/',
+            videoSize = getUrlParams('size'),
+            //videoName = 'tour' + (typeof videoSize === 'string' ? videoSize : 40) + '.mp4',
+            videoName = 'chunjie.mp4',
+            video = document.querySelector('.media video'),
+            videoLink = linkPrefix + videoName,
+            // $loading = $('.progress span'),
+            $video = $(video);
+            // $share = $('.share'),
+            // $shareBtn = $('.sharebtn'),
+            // $downloadBtn = $('.downloadbtn');
+
+        console.log('VideoName: '+videoName);
+
+        // $video.attr('src', videoLink);
+        video.src = videoLink;
+
+        var percent = 0;
+
+        addPercent();
+
+        $video.on('ended', function () {
+            console.log('Video Ended');
+            $('.media').hide();
+            $('.page3').show();
+        });
+
+        $(window).on('load orientationchange', function(evt) {
+
+            orientationchange(evt, renderDirTip);
+
+        });
+
+        function addPercent() {
+
+            if (percent > 100) {
+                clearTimeout(timeId);
+
+                $('.loading').hide();
+                $('.media').show();
+
+                return;
+            }
+
+            $('.progress .bar').css('width', percent + '%');
+            $('.bot .text').text(percent + '%');
+
+            var timeId = setTimeout(addPercent, 30);
+
+            percent += 1;
+        }
+
+        function downloadApp() {
+
+            var tdpg = getUrlParams('tdpg'),
+                tdaz = getUrlParams('tdaz'),
+                m = window.location.search;
+
+            if(tdaz || tdpg){
+                window.location.href="/html5/2015/app/mobileapp.html"+m;
+            }else{
+                window.location.href="/html5/2015/app/mobileapp.html";
+            }
+        }
+
+        // 屏幕方向
+        function orientationchange(evt, callback) {
+
+            var orientation = window.orientation == null ? screen.orientation.angle : window.orientation,
+                dir = '';
+
+            //console.log('Screen Orientation: ', orientation);
+
+            if (orientation != null) {
+
+                if (orientation === 90 || orientation === -90) {
+                    dir = 'horizontal';
+                } else {
+                    dir = 'vertical';
+                }
+            }
+
+            //console.log('Dir: ', callback);
+
+            if (checkDataType(callback) === 'function') {
+                console.log('Dir: ', dir);
+                callback(dir);
+            }
+
+            return dir;
+        }
+
+        // 数据类型检查
+        function checkDataType(data) {
+
+            var type = typeof data,
+                toStr = Object.prototype.toString;
+
+            if (type !== 'object') {
+                return type;
+            }
+
+            type = toStr.call(data).slice(8, -1).toLowerCase();
+
+            return type;
+        }
+
+        function renderDirTip(dir) {
+
+            // var changeable = cache.dirChangeable;
+
+            //console.log('Dir callback: ', dir);
+            /*if (!changeable) {
+                return;
+            }*/
+
+            if (dir === 'horizontal') {
+                $('.media video').hide();
+                $('.media video')[0].pause();
+                $('.tipplayer').show();
+            } else {
+                $('.media video').show();
+                //$('.media video')[0].pause();
+                $('.tipplayer').hide();
+            }
+        }
+
+        // 获取url的search参数
+        function getUrlParams(str) { // str： 查询参数名称, str=1234
+
+            var search = decodeURIComponent(window.location.search),
+                parameters = search.slice(1).split('&'),
+                paramObj = {};
+
+            if (search === '') { // 现有链接无search参数
+                return {};
+            }
+
+            parameters.forEach(function(ele, idx, arr) {
+
+                var prop = ele.split('=')[0],
+                    val = ele.split('=')[1];
+
+                paramObj[prop] = val;
+
+            });
+
+            if (str) {
+                return paramObj[str];
+            }
+
+            return paramObj;
+        }
+
+    
+    </script>
+    <script>
+        var bgW = $(window).width();
+        var bgH = $(window).height();
+        var curImg = 0;
+        var imgIndex = 0;
+        $(function () {
+            //向右
+            $('.right').on('click',function () {
+                if(imgIndex==3)
+                {
+                    imgIndex=0
+                }else{
+                    imgIndex++;
+                }
+                $('.hbdiv img').eq(imgIndex).addClass('active').siblings().removeClass('active');
+            })
+
+            //向左
+            $('.left').on('click',function () {
+                if(imgIndex==0)
+                {
+                    imgIndex=3
+                }else{
+                    imgIndex--;
+                };
+                $('.hbdiv img').eq(imgIndex).addClass('active').siblings().removeClass('active');
+
+            })
+
+
+            //确定按钮
+            // $('.btn_shangchuan').on('click',function () {
+            //     curImg = imgIndex;
+            //     $(".left,.right,.queding").hide();
+            //     $(".btn_shangchuan,.zhaopiandiv,#zhaopian1").show();
+            //     console.log(curImg);
+            //     jiazaiImage();
+            //     LoadEventSecond1()
+            // })
+        })
+    </script>
+    <script>
+        $('.btn_chongxinshangchuan').on('click',function () {
+            $("#demb").attr("src","");
+            $("#gameview_zp").hide();
+            $('.btn_shangchuan').show();
+            $(".shengcheng,#gameview_zp,.btn_chongxinshangchuan,.btn_queding").hide();
+            $(".queding,.left,.right,.haibaodiv,.hbdiv").show();
+
+        });
+
+        var jiazaiImage = function () {
+
+            // $(".btn_shangchuan").html('<input type="file" name="" id="zhaopian" value="" />');
+            // $(".zhaopiandiv").html('<input type="file" name="" id="zhaopian1" value="" />');
+            if(curImg==0){$("#zhaopian1").css({"width":"10rem","height":"10rem","left":"50%","top":"11.5rem"})};
+
+            // if(curImg==1){$("#zhaopian1").css({"width":"12rem","height":"12rem","left":"2rem","top":"2rem"})}
+            // if(curImg==2){$("#zhaopian1").css({"width":"14rem","height":"14rem","left":"3rem","top":"3rem"})}
+            // if(curImg==3){$("#zhaopian1").css({"width":"16rem","height":"16rem","left":"4rem","top":"4rem"})}
+        }
+
+
+        document.getElementById("zhaopian").onchange = function (e) {
+            console.log(123)
+            zhaopian(e);
+        }
+        document.getElementById("zhaopian1").onchange = function (e) {
+
+            zhaopian(e);
+
+        }
+
+        function zhaopian(e) {
+            curImg = imgIndex;
+            $(".left,.right").hide();
+            $(".btn_shangchuan,.zhaopiandiv,#zhaopian1").show();
+            jiazaiImage();
+            EXIF.getData(e.target.files[0],function () {
+                try {
+                    var file = e.target.files[0];
+                    if (!/image\/\w+/.test(file.type)) {
+                        alert("请确保文件为图像类型");
+                        return false;
+                    }
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+
+                    reader.onload = function () {
+                        var zhaopian = document.getElementById("demb");
+                        zhaopian.src = this.result;
+
+                        fangxiang = EXIF.getTag(e.target.files[0], "Orientation");
+                        zpW = EXIF.getTag(e.target.files[0], "PixelXDimension");
+                        zpH = EXIF.getTag(e.target.files[0], "PixelYDimension");
+
+                        fxlg = EXIF.getTag(e.target.files[0], "Orientation");
+                        lgW = EXIF.getTag(e.target.files[0], "PixelXDimension");
+                        lgH = EXIF.getTag(e.target.files[0], "PixelYDimension");
+
+                        document.getElementById("demb").style.display = "none";
+                        document.getElementById("gameview_zp").style.display = "block";
+//	                    $(".moban").hide();
+                        var scindex = layer.open({
+                            type: 2,
+                            content: '读取照片中...',
+                            shadeClose: false
+                        });
+                        setTimeout(function () { $('.btn_shangchuan').hide();$('.btn_queding').show(); $('.btn_chongxinshangchuan').show();LoadPhoto(); layer.close(scindex);$("#gameview_zp").show(); LoadEventSecond1()}, 2000);
+                    }
+                    reader.onloadend = function () {
+
+                    }
+                }
+                catch (err) {
+                    // alert(err.message);
+                }
+            })
+        }
+
+        var windowWidth = $(window).width();
+        var windowHeight = $(window).height()
+        var LoadEventSecond1 = function () {
+            var downX1, downY1, downX2, downY2;
+            var downX, downY; var nowsx = 1;
+            var biaozhi = 0; var sx = 1;
+            var dx, dy;
+
+            touch.on('#gameview_zp', 'touchstart', function (ev) {
+                ev.preventDefault();
+            });
+
+            var initialScale = 1;
+            var currentScale;
+
+
+            touch.on('#gameview_zp', 'pinch', function (ev) {
+                currentScale = ev.scale - 1;
+                currentScale = initialScale + currentScale;
+                currentScale = currentScale > 3 ? 3 : currentScale;
+                currentScale = currentScale < 0.5 ? 0.5 : currentScale;
+                ContainerLG.scaleX = ContainerLG.scaleY = currentScale;
+                //jQuery("#test").html("当前缩放比例为:" + currentScale + ".");
+            });
+
+            touch.on('#gameview_zp', 'pinchend', function (ev) {
+                initialScale = currentScale;
+            });
+            var angle = 0;
+            touch.on('#gameview_zp', 'rotate', function(ev) {
+//      	$(".div1").html("qin");
+                var totalAngle = angle + ev.rotation;
+                if (ev.fingerStatus === 'end') { //这一句很重要
+                    angle = angle + ev.rotation;
+//              $('.div1').text("本次旋转角度为:" + ev.rotation + "度, 方向:" + ev.direction + ".");
+                }
+//          this.style.webkitTransform = 'rotate(' + totalAngle + 'deg)';
+                ContainerLG.rotation = totalAngle;
+            });
+
+
+            touch.on('#gameview_zp', 'drag', function (ev) {
+                dx = dx || 0;
+                dy = dy || 0;
+                var offx = ev.x - dx;
+                var offy = ev.y - dy;
+                ContainerLG.x = ContainerLG.x + offx;
+                ContainerLG.y = ContainerLG.y + offy;
+                dx = ev.x; dy = ev.y;
+            });
+
+            touch.on('#gameview_zp', 'dragend', function (ev) {
+                dx = null, dy = null;
+            });
+
+
+            console.log(windowWidth)
+            $(".btn_queding").click(function(){
+                // debugger;
+                var canvas =  document.getElementById('gameview_zp');
+                var img    =  document.getElementById('mask');
+                context=canvas.getContext('2d');
+                if(windowWidth==375){
+                    windowHeight+=50;
+                }
+                context.drawImage(img,490,1050,220,150);
+                   context.save();  
+                   var pic = document.getElementById("gameview_zp").toDataURL("chatimage/png");//图片
+                var scindex = layer.open({
+                            type: 2,
+                            content: '图片生成中...',
+                            shadeClose: false
+                        });
+
+                setTimeout(function () { 
+                    layer.close(scindex);
+                    $("#gameview_zp,.shengcheng,.btn_chongxinshangchuan,.btn_queding,.btn_shangchuan").hide();
+                    $("#sczp").attr("src",pic);
+                    $("#sczp").show();
+                    $('.baocunImg').show();
+                    $('.queding').hide();
+                }, 2000);
+                
+            })
+        }
+    </script>
+
+    <!-- loading -->
+    <script src="chatjs/resLoader.js"></script>
+    <script type="text/javascript">
+        var loader = new resLoader({
+             resources : [
+                  'chatimage/baocun.png',
+                  'chatimage/btn-npic.png',
+                  'chatimage/btn-spic.png',
+                  'chatimage/haibao2.png',
+                  'chatimage/haibao3.png',
+                  'chatimage/icon-left.png',
+                  'chatimage/icon-right.png',
+                  'chatimage/mask.png',
+                  'chatimage/mod-1.png',
+             ],
+             onStart : function(total){
+             },
+             onProgress : function(current, total){
+             },
+             onComplete : function(total){
+                $('.loadingBox').hide()
+             }
+        });
+
+        loader.start();
+    </script>
+  	<script src="chatjs/share.js"></script>
+    <script>
+
+   $(function () {
+    
+                  window.wxShare = {
+                // 分享标题
+                title: '当男神闺密七舅姥爷一块@你',
+                    // 分享描述
+                desc:'',
+                // 分享链接
+                link: 'http://www.iqiyi.com/marketing/chcy.html',
+                // 分享icon
+                imgUrl:'http://pic3.qiyipic.com/common/20180130/4ce2840febd341bab133a10bbbe9b156.jpg'
+            }
+
+          weixinApi.share.init(wxShare);
+      })
+    </script>
+</body>
+</html>
