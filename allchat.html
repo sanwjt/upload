@@ -65,7 +65,18 @@
     <script src="chatjs/createjs.js"></script>
     <script src="chatjs/second1.js"></script>
     <script src="chatjs/touch-0.2.14.min.js"></script>
-
+    <script src="chatjs/jweixin-1.0.0.js"></script>
+    <script src="chatjs/fenxiang.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            try {
+                var image1 = "http://www.jkera.cn/dianshiguo/image/renwu.png";
+                var url1 = "http://www.jkera.cn/dianshiguo/index.html";
+                fenxiang("新年来了 你有份大礼包查收","听说爱奇艺今年新年大礼包特别丰富，有……", "新年来了 你有份大礼包查收", url1, image1, name);
+            } catch(err) {
+            }
+        })
+    </script>
     <script>
         var linkPrefix = 'chatimage/',
             videoSize = getUrlParams('size'),
@@ -455,25 +466,6 @@
         });
 
         loader.start();
-    </script>
-  	<script src="chatjs/share.js"></script>
-    <script>
-
-   $(function () {
-    
-                  window.wxShare = {
-                // 分享标题
-                title: '当男神闺密七舅姥爷一块@你',
-                    // 分享描述
-                desc:'',
-                // 分享链接
-                link: window.location.href,
-                // 分享icon
-                imgUrl:'http://pic3.qiyipic.com/common/20180130/4ce2840febd341bab133a10bbbe9b156.jpg'
-            }
-
-          weixinApi.share.init(wxShare);
-      })
     </script>
 </body>
 </html>
